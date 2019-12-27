@@ -1,4 +1,4 @@
-# Woodside Timelapse
+# Woodside Timelapse (WIP)
 A simple python script that pulls an image off [Monash's woodside construction site](https://www.monash.edu/it/woodside-building) every 10 minutes.
 
 Motivations: 
