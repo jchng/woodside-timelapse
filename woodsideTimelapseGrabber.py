@@ -12,33 +12,59 @@ import os
 
 class WoodsideTimeLapse:
 
-	IMAGE_URL = "http://setup.reliveit.com.au/api/installations/8827/TrgviRsRHT/latestPhotoWithMarks.jpg"
-	TIME_LAPSE_OUTPUT_FPS = 5
-	CUT_OFF_TIME = "7:10 PM"
-	START_TIME = "UNKNOWN"
-	RECORDING_FILE = "recordings/"
+	IMAGE_URL = "http://setup.reliveit.com.au/api/installations/8827/TrgviRsRHT/latestPhotoWithMarks.jpg" # URL to download the image from
+	TIME_LAPSE_OUTPUT_FPS = 5 # FPS for the output video
+	CAPTURE_FREQUENCY = 10 * 60 # * 60 for 10 minutes 
+	#CUT_OFF_TIME = "7:03 PM"
+	#START_TIME = "UNKNOWN"
+	RECORDING_FOLDER = "recordings/" # folder to dump downloaded pictures
 
-	currentDate = None
-	currentTime = None
+	currentRecordingPath = None
+	fileDate = None
+	fileTime = None
 	imageId = 0
 
 	def __init__(self):
-		currentDate = self.getCurrentDate()
-		currentTime = self.getCurrentTime()
+		self.updateTimeDate()
 		self.initRecordingFolder()
 		time.sleep(1)
 		self.createNewDay()
 
-	# def startRecording(self):
+		self.startRecording()
 
+	# Start capturing pictures
+	def startRecording(self):
+		while True:
+			self.checkAndCreateNewFolder()
 
+			self.updateTimeDate()
+
+			pathName = self.currentRecordingPath + self.getImageName() + ".jpg"
+
+			localImageFilename = wget.download(self.IMAGE_URL,pathName)
+
+			time.sleep(self.CAPTURE_FREQUENCY)
+
+	# Creates a new folder if the date changes
+	def checkAndCreateNewFolder(self):
+		if self.fileDate != self.getCurrentDate():
+			os.system("ffmpeg -framerate " + str(TIME_LAPSE_OUTPUT_FPS) + " -i image-%000d%*.jpg -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.currentRecordingPath + "timelapse.mp4 &")
+			self.createNewDay()
+			self.imageId = 0
+
+	# Update program's time
+	def updateTimeDate(self):
+		self.fileDate = self.getCurrentDate()
+		self.fileTime = self.getCurrentTime()
+
+	# Get the file name of the image
 	def getImageName(self):
 		# Examples:
 		# image-0_DD-MM-YYYY_HH-MM-SS
 		# image-1_DD-MM-YYYY_HH-MM-SS
 
-		imageName = "image-" + str(imageId) + currentDate + "_" + currentTime
-		imageId += 1
+		imageName = "image-" + str(self.imageId).zfill(3) + "_" + self.fileDate + "_" + self.fileTime
+		self.imageId += 1
 
 		return imageName
 
@@ -51,23 +77,19 @@ class WoodsideTimeLapse:
 	def createNewDay(self):
 		'''Creates a new folder for a new day'''
 		try:
-			os.mkdir(self.RECORDING_FILE + self.getCurrentDate())
+			os.mkdir(self.RECORDING_FOLDER + self.getCurrentDate())
 		except FileExistsError:
 			pass
 
+		self.currentRecordingPath = self.RECORDING_FOLDER + self.getCurrentDate() + "/"
+
+	# Check if the recording folder exists, creates one if it does not
 	def initRecordingFolder(self):
 		'''Creates a new folder for the photos/videos'''
 		try:
-			os.mkdir(self.RECORDING_FILE)
+			os.mkdir(self.RECORDING_FOLDER)
 		except FileExistsError:
 			pass
-
-	# while True:
-	# 	fileName = time.strftime("%d-%m-%Y_%I-%M-%S-%p", time.localtime()) + ".jpg"
-
-	# 	localImageFilename = wget.download(IMAGE_URL,fileName)
-
-	# 	time.sleep(600)
 
 if __name__ == '__main__':
 	WoodsideTimeLapse()

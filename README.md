@@ -8,6 +8,6 @@ Motivations:
 
 Requires: 
 * `pip3 install wget`
-* `pip3 install ffmpeg`
+* `sudo apt install ffmpeg`
 
 
