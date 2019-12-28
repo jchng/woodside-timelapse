@@ -49,8 +49,11 @@ class WoodsideTimeLapse:
 	# Creates a new folder if the date changes
 	def checkAndCreateNewFolder(self):
 		if self.fileDate != self.getCurrentDate():
-			print("\nIt's a new day!")
+
+			print("\n\n\n ===============================\n-====== [It's a new day!] ======-\n ===============================\n\n\n")
+
 			os.system("python3 woodsideUtilities.py ./ " + self.currentRecordingPath + " &") # Runs work compiler in the background "&"
+			
 			self.createNewDay()
 			self.imageId = 0
 
