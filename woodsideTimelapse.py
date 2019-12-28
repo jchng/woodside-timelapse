@@ -15,7 +15,7 @@ class WoodsideTimeLapse:
 
 	IMAGE_URL = "http://setup.reliveit.com.au/api/installations/8827/TrgviRsRHT/latestPhotoWithMarks.jpg" # URL to download the image from
 	TIME_LAPSE_OUTPUT_FPS = 5 # FPS for the output video
-	CAPTURE_FREQUENCY = 5 # * 60 for 10 minutes 
+	CAPTURE_FREQUENCY = 10 * 60 # * 60 seconds for 10 minutes 
 	#CUT_OFF_TIME = "7:03 PM"
 	#START_TIME = "UNKNOWN"
 	RECORDING_FOLDER = "recordings/" # folder to dump downloaded pictures
@@ -52,7 +52,7 @@ class WoodsideTimeLapse:
 
 			print("\n\n\n ===============================\n-====== [It's a new day!] ======-\n ===============================")
 
-			os.system("python3 woodsideUtilities.py ./ " + self.currentRecordingPath + " " + self.TIME_LAPSE_OUTPUT_FPS + " &") # Runs work compiler in the background "&"
+			os.system("python3 woodsideUtilities.py ./ " + self.currentRecordingPath + " " + str(self.TIME_LAPSE_OUTPUT_FPS) + " &") # Runs work compiler in the background "&"
 
 			self.createNewDay()
 			self.imageId = 0
