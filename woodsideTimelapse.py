@@ -50,10 +50,10 @@ class WoodsideTimeLapse:
 	def checkAndCreateNewFolder(self):
 		if self.fileDate != self.getCurrentDate():
 
-			print("\n\n\n ===============================\n-====== [It's a new day!] ======-\n ===============================\n\n\n")
+			print("\n\n\n ===============================\n-====== [It's a new day!] ======-\n ===============================")
 
-			os.system("python3 woodsideUtilities.py ./ " + self.currentRecordingPath + " &") # Runs work compiler in the background "&"
-			
+			os.system("python3 woodsideUtilities.py ./ " + self.currentRecordingPath + " " + self.TIME_LAPSE_OUTPUT_FPS + " &") # Runs work compiler in the background "&"
+
 			self.createNewDay()
 			self.imageId = 0
 
