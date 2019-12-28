@@ -13,6 +13,7 @@ class BackgroundUtilities:
 
 	FRAMES_ARCHIVE_NAME = "frames.tar.gz"
 	URL_FILE_NAME = "archive-downloads.txt"
+	TIME_LAPSE_OUTPUT_FPS = 5
 
 	def __init__(self):
 		self.urlFile = sys.argv[1] + self.URL_FILE_NAME
@@ -35,13 +36,13 @@ class BackgroundUtilities:
 		downloadLink = os.popen("curl --upload-file " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + \
 			" https://transfer.sh/woodside_archive_" + time.strftime("%d-%m-%Y", time.localtime())).read() + ".tar.gz"
 		
-		file = open(self.urlFile + "\n","a+")
-		file.write(downloadLink)
+		file = open(self.urlFile,"a+")
+		file.write(downloadLink  + "\n")
 		file.close()
 
 	def createVideo(self):
 		print('Compiling')
-		os.system("ffmpeg -framerate " + str(TIME_LAPSE_OUTPUT_FPS) + " -i image-%000d%*.jpg -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.framesFolder + "timelapse.mp4")
+		os.system("ffmpeg -framerate " + str(self.TIME_LAPSE_OUTPUT_FPS) + " -i " + framesFolder + "image-%000d%*.jpg -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.framesFolder + "timelapse.mp4")
 
 
 if __name__ == '__main__':
