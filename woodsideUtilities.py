@@ -42,7 +42,7 @@ class BackgroundUtilities:
 
 	def createVideo(self):
 		print('Compiling')
-		os.system("ffmpeg -framerate " + str(self.TIME_LAPSE_OUTPUT_FPS) + " -i " + framesFolder + "image-%000d%*.jpg -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.framesFolder + "timelapse.mp4")
+		os.system("ffmpeg -framerate " + str(self.TIME_LAPSE_OUTPUT_FPS) + " -pattern_type glob -i " + framesFolder + "image-[0-9][0-9][0-9]_*.jpg -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.framesFolder + "timelapse.mp4")
 
 
 if __name__ == '__main__':
