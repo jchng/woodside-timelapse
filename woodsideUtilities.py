@@ -21,28 +21,33 @@ class BackgroundUtilities:
 
 	# creates the time lapse for the day, compresses and uploads
 	def createVideoCompressAndUpload(self):
+		print('\n\n\n=================================\n========== [Compiling] ==========\n=================================\n\n\n')
 		self.createVideo()
+
 		time.sleep(1)
+		
+		print('\n\n\n===================================\n========== [Compressing] ==========\n===================================\n\n\n')
 		self.compress()
+		
 		time.sleep(1)
+
+		print('\n\n\n=================================\n========== [Uploading] ==========\n=================================\n\n\n')
 		self.upload()
 
 	def compress(self):
-		print('Compressing')
-		os.system("tar -czvf " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + " " + self.framesFolder)
+		os.system("tar -czvf " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + ".tar.gz " + self.framesFolder)
 
 	def upload(self):
-		print('Uploading')
 		downloadLink = os.popen("curl --upload-file " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + \
-			" https://transfer.sh/woodside_archive_" + time.strftime("%d-%m-%Y", time.localtime())).read() + ".tar.gz"
+			".tar.gz https://transfer.sh/woodside_archive_" + time.strftime("%d-%m-%Y", time.localtime())).read()
 		
 		file = open(self.urlFile,"a+")
 		file.write(downloadLink  + "\n")
 		file.close()
 
 	def createVideo(self):
-		print('Compiling')
-		os.system("ffmpeg -framerate " + str(self.TIME_LAPSE_OUTPUT_FPS) + " -pattern_type glob -i " + framesFolder + "image-[0-9][0-9][0-9]_*.jpg -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.framesFolder + "timelapse.mp4")
+		
+		os.system("ffmpeg -framerate " + str(self.TIME_LAPSE_OUTPUT_FPS) + " -pattern_type glob -i " + self.framesFolder + "\"image-[0-9][0-9][0-9]_*.jpg\" -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.framesFolder + "timelapse.mp4")
 
 
 if __name__ == '__main__':
