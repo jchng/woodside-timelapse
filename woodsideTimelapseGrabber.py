@@ -14,7 +14,7 @@ class WoodsideTimeLapse:
 
 	IMAGE_URL = "http://setup.reliveit.com.au/api/installations/8827/TrgviRsRHT/latestPhotoWithMarks.jpg" # URL to download the image from
 	TIME_LAPSE_OUTPUT_FPS = 5 # FPS for the output video
-	CAPTURE_FREQUENCY = 10 * 60 # * 60 for 10 minutes 
+	CAPTURE_FREQUENCY = 5 # * 60 for 10 minutes 
 	#CUT_OFF_TIME = "7:03 PM"
 	#START_TIME = "UNKNOWN"
 	RECORDING_FOLDER = "recordings/" # folder to dump downloaded pictures
@@ -48,7 +48,7 @@ class WoodsideTimeLapse:
 	# Creates a new folder if the date changes
 	def checkAndCreateNewFolder(self):
 		if self.fileDate != self.getCurrentDate():
-			os.system("ffmpeg -framerate " + str(TIME_LAPSE_OUTPUT_FPS) + " -i image-%000d%*.jpg -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.currentRecordingPath + "timelapse.mp4 &")
+			os.system("ffmpeg -framerate " + str(TIME_LAPSE_OUTPUT_FPS) + " -i image-%000d%*.jpg -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.currentRecordingPath + "timelapse.mp4 & ")
 			self.createNewDay()
 			self.imageId = 0
 
