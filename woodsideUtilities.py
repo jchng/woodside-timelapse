@@ -6,6 +6,7 @@ Date created: 28/12/2019
 '''
 
 import os
+import sys
 import time
 
 class BackgroundUtilities:
@@ -13,9 +14,9 @@ class BackgroundUtilities:
 	FRAMES_ARCHIVE_NAME = "frames.tar.gz"
 	URL_FILE_NAME = "archive-downloads.txt"
 
-	def __init__(self, urlsPath, framesFolder):
-		self.urlFile = urlsPath + self.URL_FILE_NAME
-		self.framesFolder = framesFolder
+	def __init__(self):
+		self.urlFile = sys.argv[1] + self.URL_FILE_NAME
+		self.framesFolder = sys.argv[2]
 
 	# creates the time lapse for the day, compresses and uploads
 	def createVideoCompressAndUpload(self):
@@ -32,9 +33,9 @@ class BackgroundUtilities:
 	def upload(self):
 		print('Uploading')
 		downloadLink = os.popen("curl --upload-file " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + \
-			" https://transfer.sh/woodside_archive_" + time.strftime("%d-%m-%Y", time.localtime())).read() + ".tar.gz\n"
+			" https://transfer.sh/woodside_archive_" + time.strftime("%d-%m-%Y", time.localtime())).read() + ".tar.gz"
 		
-		file = open(self.urlFile,"a+")
+		file = open(self.urlFile + "\n","a+")
 		file.write(downloadLink)
 		file.close()
 
@@ -44,4 +45,5 @@ class BackgroundUtilities:
 
 
 if __name__ == '__main__':
-	BackgroundUtilities("./","./testDir").compressAndUpload()
+	BackgroundUtilities().createVideoCompressAndUpload()
+	# BackgroundUtilities("./","./testDir")
