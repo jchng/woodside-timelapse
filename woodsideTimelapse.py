@@ -25,9 +25,10 @@ class WoodsideTimeLapse:
 	fileDate = None
 	fileTime = None
 	imageId = 0
-	newDay = False
+	newDay = True
 
 	def __init__(self):
+		self.addToLog("Initialising folders")
 		self.updateFileTimeDate()
 		self.initRecordingFolder()
 
@@ -38,6 +39,9 @@ class WoodsideTimeLapse:
 
 	# Start capturing pictures
 	def startRecording(self):
+
+		self.addToLog("Start recording")
+
 		while True:
 			self.checkAndCreateNewFolder()
 
@@ -81,9 +85,6 @@ class WoodsideTimeLapse:
 
 			self.updateFileTimeDate()
 
-			self.addToLog("New recording day folder created.")
-
-
 	# Update program's time
 	def updateFileTimeDate(self):
 		self.fileDate = self.getCurrentDate()
@@ -110,6 +111,7 @@ class WoodsideTimeLapse:
 		'''Creates a new folder for a new day'''
 		try:
 			os.mkdir(self.RECORDING_FOLDER + self.getCurrentDate())
+			self.addToLog("New recording day folder created.")
 		except FileExistsError:
 			pass
 
