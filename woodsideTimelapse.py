@@ -43,18 +43,18 @@ class WoodsideTimeLapse:
 
 			if not self.newDay:
 
-				self.addToLog("Captured image: " + str(self.imageId).zfill(3))
-
 				self.updateFileTimeDate()
 
 				pathName = self.currentRecordingPath + self.getImageName() + ".jpg"
 
 				localImageFilename = wget.download(self.IMAGE_URL,pathName)
 
-				time.sleep(self.CAPTURE_FREQUENCY-1)
+				self.addToLog("Captured image: " + str(self.imageId).zfill(3))
+
+			time.sleep(self.CAPTURE_FREQUENCY-1)
 
 	def addToLog(self, message):
-		print("[" + self.getCurrentDate() + " " + self.getCurrentTime() + "]:	" + message + "\n")
+		print("\n[" + self.getCurrentDate() + " " + self.getCurrentTime().replace("-",":") + "]:	" + message + "\n")
 
 	# Creates a new folder if the date changes
 	def checkAndCreateNewFolder(self):
@@ -63,18 +63,18 @@ class WoodsideTimeLapse:
 		cutOff = datetime.datetime.strptime(self.CUT_OFF_TIME, "%H-%M-%S") 
 		startTime = datetime.datetime.strptime(self.START_TIME, "%H-%M-%S") 
 
-		if (currentTime >= cutOff):
-			print("== [End of the day] ==")
+		if (currentTime >= cutOff) and not self.newDay:
+			self.addToLog("Recording paused automatically. (End of day)")
+			self.addToLog("Archiving today's work.")
+			os.system("python3 woodsideUtilities.py ./ " + self.currentRecordingPath + " " + str(self.TIME_LAPSE_OUTPUT_FPS) + " &") # Runs work compiler in the background "&"
 			self.newDay = True
-		elif (currentTime >= startTime):
-			print("== [Recording resumed] ==")
+		elif (cutOff >= currentTime >= startTime) and self.newDay:
+			self.addToLog("Recording resumed automatically.")
 			self.newDay = False
 
 		if self.fileDate != self.getCurrentDate():
 
-			print("\n\n\n =========================\n-=== [It's a new day!] ===-\n =========================")
-
-			os.system("python3 woodsideUtilities.py ./ " + self.currentRecordingPath + " " + str(self.TIME_LAPSE_OUTPUT_FPS) + " &") # Runs work compiler in the background "&"
+			self.addToLog("It's a new day!")
 
 			self.createNewDay()
 			self.imageId = 0
