@@ -41,11 +41,11 @@ class BackgroundUtilities:
 		print('\n\n\n========================================\n========= [Archive Complete..] =========\n========================================\n\n\n')
 
 	def compress(self):
-		os.system("tar -czvf " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + ".tar.gz " + self.framesFolder)
+		os.system("tar -czvf " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + " " + self.framesFolder)
 
 	def upload(self):
 		downloadLink = os.popen("curl --upload-file " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + \
-			".tar.gz https://transfer.sh/woodside_archive_" + self.archiveDate + ".tar.gz").read()
+			" https://transfer.sh/woodside_archive_" + self.archiveDate + ".tar.gz").read()
 		
 		file = open(self.urlFile,"a+")
 		file.write(downloadLink  + "\n")

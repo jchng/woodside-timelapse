@@ -6,6 +6,7 @@ Author: Jarret Jheng Ch'ng
 Date created: 27/12/2019
 '''
 
+import datetime
 import time
 import wget
 import os
@@ -16,21 +17,23 @@ class WoodsideTimeLapse:
 	IMAGE_URL = "http://setup.reliveit.com.au/api/installations/8827/TrgviRsRHT/latestPhotoWithMarks.jpg" # URL to download the image from
 	TIME_LAPSE_OUTPUT_FPS = 5 # FPS for the output video
 	CAPTURE_FREQUENCY = 10 * 60 # * 60 seconds for 10 minutes 
-	#CUT_OFF_TIME = "7:03 PM"
-	#START_TIME = "UNKNOWN"
+	CUT_OFF_TIME = "19-20-00" # for the day
+	START_TIME = "06-50-00"
 	RECORDING_FOLDER = "recordings/" # folder to dump downloaded pictures
 
 	currentRecordingPath = None
 	fileDate = None
 	fileTime = None
 	imageId = 0
+	newDay = False
 
 	def __init__(self):
-		self.updateTimeDate()
+		self.updateFileTimeDate()
 		self.initRecordingFolder()
-		time.sleep(1)
-		self.createNewDay()
 
+		time.sleep(1)
+		
+		self.createNewDay()
 		self.startRecording()
 
 	# Start capturing pictures
@@ -38,16 +41,28 @@ class WoodsideTimeLapse:
 		while True:
 			self.checkAndCreateNewFolder()
 
-			self.updateTimeDate()
+			if not self.newDay:
 
-			pathName = self.currentRecordingPath + self.getImageName() + ".jpg"
+				self.updateFileTimeDate()
 
-			localImageFilename = wget.download(self.IMAGE_URL,pathName)
+				pathName = self.currentRecordingPath + self.getImageName() + ".jpg"
 
-			time.sleep(self.CAPTURE_FREQUENCY)
+				localImageFilename = wget.download(self.IMAGE_URL,pathName)
+
+				time.sleep(self.CAPTURE_FREQUENCY-1)
 
 	# Creates a new folder if the date changes
 	def checkAndCreateNewFolder(self):
+
+		currentTime = timedate.timedate.strptime(self.getCurrentTime(), "%H-%M-%S") 
+		cutOff = timedate.timedate.strptime(self.CUT_OFF_TIME, "%H-%M-%S") 
+		startTime = timedate.timedate.strptime(self.START_TIME, "%H-%M-%S") 
+
+		if (currentTime >= cutOff):
+			self.newDay = True
+		elif (currentTime >= startTime):
+			self.newDay = False
+
 		if self.fileDate != self.getCurrentDate():
 
 			print("\n\n\n ===============================\n-====== [It's a new day!] ======-\n ===============================")
@@ -58,7 +73,7 @@ class WoodsideTimeLapse:
 			self.imageId = 0
 
 	# Update program's time
-	def updateTimeDate(self):
+	def updateFileTimeDate(self):
 		self.fileDate = self.getCurrentDate()
 		self.fileTime = self.getCurrentTime()
 
