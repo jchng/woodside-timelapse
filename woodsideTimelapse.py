@@ -43,6 +43,8 @@ class WoodsideTimeLapse:
 
 			if not self.newDay:
 
+				self.addToLog("Captured image: " + str(self.imageId).zfill(3))
+
 				self.updateFileTimeDate()
 
 				pathName = self.currentRecordingPath + self.getImageName() + ".jpg"
@@ -50,6 +52,9 @@ class WoodsideTimeLapse:
 				localImageFilename = wget.download(self.IMAGE_URL,pathName)
 
 				time.sleep(self.CAPTURE_FREQUENCY-1)
+
+	def addToLog(self, message):
+		print("[" + self.getCurrentDate() + " " + self.getCurrentTime() + "]:	" + message + "\n")
 
 	# Creates a new folder if the date changes
 	def checkAndCreateNewFolder(self):
@@ -59,18 +64,25 @@ class WoodsideTimeLapse:
 		startTime = datetime.datetime.strptime(self.START_TIME, "%H-%M-%S") 
 
 		if (currentTime >= cutOff):
+			print("== [End of the day] ==")
 			self.newDay = True
 		elif (currentTime >= startTime):
+			print("== [Recording resumed] ==")
 			self.newDay = False
 
 		if self.fileDate != self.getCurrentDate():
 
-			print("\n\n\n ===============================\n-====== [It's a new day!] ======-\n ===============================")
+			print("\n\n\n =========================\n-=== [It's a new day!] ===-\n =========================")
 
 			os.system("python3 woodsideUtilities.py ./ " + self.currentRecordingPath + " " + str(self.TIME_LAPSE_OUTPUT_FPS) + " &") # Runs work compiler in the background "&"
 
 			self.createNewDay()
 			self.imageId = 0
+
+			self.updateFileTimeDate()
+
+			self.addToLog("New recording day folder created.")
+
 
 	# Update program's time
 	def updateFileTimeDate(self):
