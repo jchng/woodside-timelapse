@@ -54,9 +54,9 @@ class WoodsideTimeLapse:
 	# Creates a new folder if the date changes
 	def checkAndCreateNewFolder(self):
 
-		currentTime = timedate.timedate.strptime(self.getCurrentTime(), "%H-%M-%S") 
-		cutOff = timedate.timedate.strptime(self.CUT_OFF_TIME, "%H-%M-%S") 
-		startTime = timedate.timedate.strptime(self.START_TIME, "%H-%M-%S") 
+		currentTime = datetime.datetime.strptime(self.getCurrentTime(), "%H-%M-%S") 
+		cutOff = datetime.datetime.strptime(self.CUT_OFF_TIME, "%H-%M-%S") 
+		startTime = datetime.datetime.strptime(self.START_TIME, "%H-%M-%S") 
 
 		if (currentTime >= cutOff):
 			self.newDay = True
