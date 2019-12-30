@@ -11,14 +11,21 @@ import time
 
 class BackgroundUtilities:
 
-	FRAMES_ARCHIVE_NAME = "frames.tar.gz"
-	URL_FILE_NAME = "archive-downloads.txt"
+	FRAMES_ARCHIVE_NAME = "frames.tar.gz" # default archive name
+	URL_FILE_NAME = "archive-downloads.txt" # saves all archive urls into this text file
+
 
 	def __init__(self):
-		self.urlFile = sys.argv[1] + self.URL_FILE_NAME
+
+		# python3 woodsideUtilities [path to url text file] [path to downloaded frames folder] [fps for video]
+
+		self.urlFile = sys.argv[1] + self.URL_FILE_NAME 
 		self.framesFolder = sys.argv[2]
 		self.TIME_LAPSE_OUTPUT_FPS = int(sys.argv[3])
+
+		# pulling the date straight from the path string (yes it's ugly)
 		self.archiveDate = self.framesFolder.split('/')[-2]
+
 
 	# creates the time lapse for the day, compresses and uploads
 	def createVideoCompressAndUpload(self):
@@ -40,9 +47,19 @@ class BackgroundUtilities:
 
 		self.addToLog("Archived and uploaded")
 
+
+	# Compiles the frames into a video with a specified fps
+	def createVideo(self):
+		
+		os.system("ffmpeg -framerate " + str(self.TIME_LAPSE_OUTPUT_FPS) + " -pattern_type glob -i " + self.framesFolder + "\"image-[0-9][0-9][0-9]_*.jpg\" -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.framesFolder + "timelapse.mp4")
+
+
+	# Compresses the contents of the folder
 	def compress(self):
 		os.system("tar -czf " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + " " + self.framesFolder)
 
+
+	# Uploads the archive to transfer.sh
 	def upload(self):
 		downloadLink = os.popen("curl --upload-file " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + \
 			" https://transfer.sh/woodside_archive_" + self.archiveDate + ".tar.gz").read()
@@ -51,10 +68,8 @@ class BackgroundUtilities:
 		file.write(downloadLink  + "\n")
 		file.close()
 
-	def createVideo(self):
-		
-		os.system("ffmpeg -framerate " + str(self.TIME_LAPSE_OUTPUT_FPS) + " -pattern_type glob -i " + self.framesFolder + "\"image-[0-9][0-9][0-9]_*.jpg\" -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.framesFolder + "timelapse.mp4")
 
+	# Prints to stdout with a timestamp
 	def addToLog(self, message):
 		print("\n[" + time.strftime("%d-%m-%Y", time.localtime()) + " " + time.strftime("%H-%M-%S", time.localtime()).replace("-",":") + "]:	" + message + "\n")
 
