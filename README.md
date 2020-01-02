@@ -1,4 +1,4 @@
-# Monash University Woodside Building Timelapse (WIP)
+# Monash University Woodside Building Timelapse
 A simple python script that pulls an image off [Monash University's Woodside](https://www.monash.edu/it/woodside-building) construction site every 10 minutes.
 
 Motivations: 
