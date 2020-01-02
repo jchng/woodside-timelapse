@@ -1,8 +1,12 @@
 '''
-A utilities class for compiling images into a timelapse and uploading it into transfer.sh
+A utilities class for compiling images into a timelapse and uploading it to 0x0.st (was transfer.sh)
 
 Author: Jarret Jheng Ch'ng
 Date created: 28/12/2019
+
+Usage: 
+python3 woodsideUtilities [path to url text file] [path to downloaded frames folder] [fps for video]
+
 '''
 
 import os
@@ -17,13 +21,11 @@ class BackgroundUtilities:
 
 	def __init__(self):
 
-		# python3 woodsideUtilities [path to url text file] [path to downloaded frames folder] [fps for video]
-
 		self.urlFile = sys.argv[1] + self.URL_FILE_NAME 
 		self.framesFolder = sys.argv[2]
 		self.TIME_LAPSE_OUTPUT_FPS = int(sys.argv[3])
 
-		# pulling the date straight from the path string (yes it's ugly)
+		# pulling the date straight from the path string (it's ugly)
 		self.archiveDate = self.framesFolder.split('/')[-2]
 
 
@@ -50,7 +52,7 @@ class BackgroundUtilities:
 
 	# Compiles the frames into a video with a specified fps
 	def createVideo(self):
-		
+		# regex to find all files with image-[number][number][number]_[[anything]...].jpg
 		os.system("ffmpeg -framerate " + str(self.TIME_LAPSE_OUTPUT_FPS) + " -pattern_type glob -i " + self.framesFolder + "\"image-[0-9][0-9][0-9]_*.jpg\" -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p " + self.framesFolder + "timelapse.mp4")
 
 
@@ -59,13 +61,13 @@ class BackgroundUtilities:
 		os.system("tar -czf " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + " " + self.framesFolder)
 
 
-	# Uploads the archive to transfer.sh
+	# Uploads the archive to 0x0.st and saves url into a urls text file
 	def upload(self):
-		downloadLink = os.popen("curl --upload-file " + self.framesFolder + self.FRAMES_ARCHIVE_NAME + \
-			" https://transfer.sh/woodside_archive_" + self.archiveDate + ".tar.gz").read()
+		downloadLink = os.popen("curl -F '@=" + self.framesFolder + self.FRAMES_ARCHIVE_NAME + \
+			"' https://0x0.st/").read()
 		
-		file = open(self.urlFile,"a+")
-		file.write(downloadLink  + "\n")
+		file = open(self.urlFile,"a+") # append to a file, creates one if it doesn't already exist
+		file.write(self.archiveDate + ":	" + downloadLink + "\n")
 		file.close()
 
 
