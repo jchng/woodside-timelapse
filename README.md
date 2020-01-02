@@ -10,4 +10,11 @@ Requires:
 * `pip3 install wget`
 * `sudo apt install ffmpeg`
 
+Features:
+* Pulls an image off a website every 10 minutes
+* Downloads images into individual day folders
+* Uploads images into a cloud service
+* Generates a timelapse video for the day at the end of the day
 
+Usage:
+* `python3 woodsideTimelapse.py`
